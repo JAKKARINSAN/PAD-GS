@@ -1,1 +1,12 @@
+Display.SelectFileDialog.SelectFile Title: $'''select excel''' IsTopMost: False CheckIfFileExists: False SelectedFile=> SelectedFile ButtonPressed=> ButtonPressed
+IF ButtonPressed = $'''Open''' THEN
+    Excel.LaunchExcel.LaunchAndOpenUnderExistingProcess Path: SelectedFile Visible: True ReadOnly: False Instance=> ExcelInstance
+    Excel.GetFirstFreeColumnRow Instance: ExcelInstance FirstFreeColumn=> FirstFreeColumn FirstFreeRow=> FirstFreeRow
+    Excel.ReadFromExcel.ReadCells Instance: ExcelInstance StartColumn: 1 StartRow: 1 EndColumn: FirstFreeColumn - 1 EndRow: FirstFreeRow - 1 ReadAsText: False FirstLineIsHeader: False RangeValue=> ExcelData
+    Excel.CloseExcel.Close Instance: ExcelInstance
+    SET NewVar TO {{ }}
+    SET NewVar['Table'] TO ExcelData
+    Variables.ConvertCustomObjectToJson CustomObject: NewVar Json=> CustomObjectAsJson
+    Web.InvokeWebService.InvokeWebService Url: $'''https://script.google.com/macros/s/AKfycbwKLyA_YncpmI9wt9ybXnFOZabedRvpN0PtV6LerV7uK_4p7ROJRiNeCw18--AMLZmi/exec''' Method: Web.Method.Post Accept: $'''application/json''' ContentType: $'''application/json''' RequestBody: CustomObjectAsJson ConnectionTimeout: 30 FollowRedirection: False ClearCookies: False FailOnErrorStatus: False EncodeRequestBody: False UserAgent: $'''Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.21) Gecko/20100312 Firefox/3.6''' Encoding: Web.Encoding.AutoDetect AcceptUntrustedCertificates: False ResponseHeaders=> WebServiceResponseHeaders Response=> WebServiceResponse StatusCode=> StatusCode
+END
 
