@@ -1,1 +1,24 @@
-
+function doPost(e) {
+  var ss= SpreadsheetApp.openById("Google Sheet ID")
+  var sheet = ss.getSheetByName("Google Sheet Name")
+  sheet.clearContents()
+  var datas = JSON.parse(e.postData.contents);
+  var index = 0;
+  var rows = [];
+  var arr = [];
+  var index = 0;
+    for (k in datas.Table[1]){
+    index = index + 1 }
+    for (i = 0; i < datas.Table.length; i++) {
+       var rows = [];
+        for (j in datas.Table[i]) {   
+          var vals1 = '';
+          vals1 = datas.Table[i][j]
+          rows.push(vals1)
+    }
+    arr.push(rows)
+   }
+      dataRange = sheet.getRange(1, 1, arr.length, index);
+      dataRange.setValues(arr); 
+  return ContentService.createTextOutput("ok")
+}
